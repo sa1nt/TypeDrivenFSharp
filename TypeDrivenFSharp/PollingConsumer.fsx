@@ -106,7 +106,7 @@ let idle (idleDuration : TimeSpan) () =
         |> int
         |> Async.Sleep
         |> Async.RunSynchronously
-    printfn "Sleeping"
+    printfn "Sleeping for %d ms" (int idleDuration.TotalMilliseconds)
     Timed.timeOn Clocks.machineClock s ()
 
 let fakeIdle duration () = 
@@ -155,17 +155,20 @@ let calculateExpectedDuration estimatedDuration durations : TimeSpan =
         | Some (avg, stdDev) -> avg + stdDev + stdDev + stdDev // avg + stdDev * 3
 
 let simulatePollForMessage (r : Random) () = 
-    printfn "Polling"
-    r.Next(100, 1000)
+    let pollDuration = r.Next(100, 1000)
+    printfn "Polling for %d ms" pollDuration
+    pollDuration
     |> Async.Sleep
     |> Async.RunSynchronously
 
-    if r.Next(0, 100) < 50 then Some ()
+    let pollSuccessful = r.Next(0, 100) < 50
+    if pollSuccessful then Some ()
     else None
 
 let simlatedHandle (r : Random) () = 
-    printfn "Handling"
-    r.Next(100, 1000)
+    let handleDuration = r.Next(100, 1000)
+    printfn "Handling for %d ms" handleDuration
+    handleDuration
     |> Async.Sleep
     |> Async.RunSynchronously
 
